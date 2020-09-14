@@ -4,6 +4,7 @@ module AlphabetCipher =
 
     type Message = string
     type Keyword = string
+    type Cipher = string
     type Alphabet = char []
 
 
@@ -11,7 +12,7 @@ module AlphabetCipher =
 
 
     let private lookup (alphabet: Alphabet) (op: int -> int -> int) (keyChar: char) (messageChar: char) =
-        let length = Array.length alphabet
+        let length = alphabet.Length
         let index (c: char) = (int c) - (int (Array.head alphabet))
 
         alphabet.[(length + index messageChar |> op <| index keyChar) % length]
@@ -21,19 +22,20 @@ module AlphabetCipher =
 
     let private decodeChar (alphabet: Alphabet) = lookup alphabet (-)
 
+    let private repeat (s: string) =
+        Seq.initInfinite (fun i -> s.[i % s.Length])
 
-    let private applyByIndex (f: char -> char -> char) (key: Keyword) (index: int) = f key.[index % key.Length]
 
     let private apply (f: char -> char -> char) (key: Keyword) (message: Message) =
         message
-        |> Seq.mapi (fun i c -> applyByIndex f key i c)
+        |> Seq.map2 f (repeat key)
         |> System.String.Concat
 
 
-    let encode (key: Keyword) (message: Message): Message =
+    let encode (key: Keyword) (message: Message): Cipher =
         apply (substituteChar englishAlphabet) key message
 
-    let decode (key: Keyword) (cipher: Message): Message =
+    let decode (key: Keyword) (cipher: Cipher): Message =
         apply (decodeChar englishAlphabet) key cipher
 
-    let decipher (cipher: Message) (message: Message): Keyword = "decypherme"
+    let decipher (cipher: Cipher) (message: Message): Keyword = "decypherme"
