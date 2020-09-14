@@ -38,4 +38,16 @@ module AlphabetCipher =
     let decode (key: Keyword) (cipher: Cipher): Message =
         apply (decodeChar englishAlphabet) key cipher
 
-    let decipher (cipher: Cipher) (message: Message): Keyword = "decypherme"
+    let decipher (cipher: Cipher) (message: Message): Keyword =
+        let rec findRepeatingSubstring length (keySequence: string) =
+            let candidate = keySequence.Substring(0, length)
+
+            if Seq.forall2 (=) (repeat candidate) keySequence
+            then candidate
+            else findRepeatingSubstring (length + 1) keySequence
+
+        let messageAsKey = message
+        let cipherAsMessage = cipher
+
+        decode messageAsKey cipherAsMessage
+        |> findRepeatingSubstring 1
