@@ -7,7 +7,6 @@ module AlphabetCipher =
 
 
     let private alphabet = [| 'a' .. 'z' |]
-    let private alphabetLength = Array.length alphabet
 
 
     let private indexIn (alphabet: char []) (c: char) = (int c) - (int (Array.head alphabet))
@@ -15,14 +14,16 @@ module AlphabetCipher =
     let private indexInAlphabet = indexIn alphabet
 
 
-    let private lookupInAlphabet (buildIndexOffset) (keyChar: char) (messageChar: char) =
-        alphabet.[buildIndexOffset (indexInAlphabet keyChar) (indexInAlphabet messageChar) % alphabetLength]
+    let private lookupInAlphabet (op: int -> int -> int) (keyChar: char) (messageChar: char) =
+        let alphabetSize = Array.length alphabet
+        let indexKeyChar = indexInAlphabet keyChar
+        let indexMessageChar = indexInAlphabet messageChar
 
-    let private substituteChar =
-        lookupInAlphabet (fun indexKeyChar indexMessageChar -> indexKeyChar + indexMessageChar)
+        alphabet.[(alphabetSize + (op indexMessageChar indexKeyChar)) % alphabetSize]
 
-    let private decodeChar =
-        lookupInAlphabet (fun indexKeyChar indexMessageChar -> indexMessageChar - indexKeyChar + alphabetLength)
+    let private substituteChar = lookupInAlphabet (+)
+
+    let private decodeChar = lookupInAlphabet (-)
 
 
     let private applyByIndex (f: char -> char -> char) (key: Keyword) (index: int) = f key.[index % key.Length]
