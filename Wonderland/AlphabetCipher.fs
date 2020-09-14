@@ -14,7 +14,7 @@ module AlphabetCipher =
         let length = Array.length alphabet
         let index (c: char) = (int c) - (int (Array.head alphabet))
 
-        alphabet.[(length + (op (index messageChar) (index keyChar))) % length]
+        alphabet.[(length + index messageChar |> op <| index keyChar) % length]
 
 
     let private substituteChar (alphabet: Alphabet) = lookup alphabet (+)
