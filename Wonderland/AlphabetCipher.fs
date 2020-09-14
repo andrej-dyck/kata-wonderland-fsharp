@@ -4,26 +4,22 @@ module AlphabetCipher =
 
     type Message = string
     type Keyword = string
+    type Alphabet = char []
 
 
-    let private alphabet = [| 'a' .. 'z' |]
+    let private englishAlphabet: Alphabet = [| 'a' .. 'z' |]
 
 
-    let private indexIn (alphabet: char []) (c: char) = (int c) - (int (Array.head alphabet))
+    let private lookup (alphabet: Alphabet) (op: int -> int -> int) (keyChar: char) (messageChar: char) =
+        let length = Array.length alphabet
+        let index (c: char) = (int c) - (int (Array.head alphabet))
 
-    let private indexInAlphabet = indexIn alphabet
+        alphabet.[(length + (op (index messageChar) (index keyChar))) % length]
 
 
-    let private lookupInAlphabet (op: int -> int -> int) (keyChar: char) (messageChar: char) =
-        let alphabetSize = Array.length alphabet
-        let indexKeyChar = indexInAlphabet keyChar
-        let indexMessageChar = indexInAlphabet messageChar
+    let private substituteChar (alphabet: Alphabet) = lookup alphabet (+)
 
-        alphabet.[(alphabetSize + (op indexMessageChar indexKeyChar)) % alphabetSize]
-
-    let private substituteChar = lookupInAlphabet (+)
-
-    let private decodeChar = lookupInAlphabet (-)
+    let private decodeChar (alphabet: Alphabet) = lookup alphabet (-)
 
 
     let private applyByIndex (f: char -> char -> char) (key: Keyword) (index: int) = f key.[index % key.Length]
@@ -34,8 +30,10 @@ module AlphabetCipher =
         |> System.String.Concat
 
 
-    let encode (key: Keyword) (message: Message): Message = apply substituteChar key message
+    let encode (key: Keyword) (message: Message): Message =
+        apply (substituteChar englishAlphabet) key message
 
-    let decode (key: Keyword) (cipher: Message): Message = apply decodeChar key cipher
+    let decode (key: Keyword) (cipher: Message): Message =
+        apply (decodeChar englishAlphabet) key cipher
 
     let decipher (cipher: Message) (message: Message): Keyword = "decypherme"
