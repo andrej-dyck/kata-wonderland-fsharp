@@ -10,7 +10,6 @@ module AlphabetCipher =
 
     let private englishAlphabet: Alphabet = [| 'a' .. 'z' |]
 
-
     let private lookup (alphabet: Alphabet) (op: int -> int -> int) (keyChar: char) (messageChar: char) =
         let length = alphabet.Length
         let index (c: char) = (int c) - (int (Array.head alphabet))
@@ -22,13 +21,9 @@ module AlphabetCipher =
 
     let private decodeChar (alphabet: Alphabet) = lookup alphabet (-)
 
-    let private repeat (s: string) =
-        Seq.initInfinite (fun i -> s.[i % s.Length])
-
-
     let private apply (f: char -> char -> char) (key: Keyword) (message: Message) =
         message
-        |> Seq.map2 f (repeat key)
+        |> Seq.map2 f (Seq.cycle key)
         |> System.String.Concat
 
 
@@ -42,7 +37,7 @@ module AlphabetCipher =
         let rec findRepeatingSubstring length (keySequence: string) =
             let candidate = keySequence.Substring(0, length)
 
-            if Seq.forall2 (=) (repeat candidate) keySequence
+            if Seq.forall2 (=) (Seq.cycle candidate) keySequence
             then candidate
             else findRepeatingSubstring (length + 1) keySequence
 
