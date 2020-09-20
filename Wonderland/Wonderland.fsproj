@@ -5,7 +5,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Include="FSharpExtensions.fs" />
         <Compile Include="AlphabetCipher.fs" />
+        <Content Include="AlphabetCipher.md" />
     </ItemGroup>
 
 </Project>

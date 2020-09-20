@@ -1,5 +1,48 @@
-﻿namespace wonderland
+﻿namespace Wonderland
 
-module Say =
-    let hello name =
-        printfn "Hello %s" name
+module AlphabetCipher =
+
+    type Message = string
+    type Keyword = string
+    type Cipher = string
+    type Alphabet = char []
+
+
+    let private englishAlphabet: Alphabet = [| 'a' .. 'z' |]
+
+    let private lookup (alphabet: Alphabet) (op: int -> int -> int) (keyChar: char) (messageChar: char) =
+        let length = alphabet.Length
+        let index (c: char) = (int c) - (int (Array.head alphabet))
+
+        alphabet.[(length + index messageChar |> op <| index keyChar) % length]
+
+
+    let private substituteChar (alphabet: Alphabet) = lookup alphabet (+)
+
+    let private decodeChar (alphabet: Alphabet) = lookup alphabet (-)
+
+    let private apply (f: char -> char -> char) (key: Keyword) (message: Message) =
+        message
+        |> Seq.map2 f (Seq.cycle key)
+        |> System.String.Concat
+
+
+    let encode (key: Keyword) (message: Message): Cipher =
+        apply (substituteChar englishAlphabet) key message
+
+    let decode (key: Keyword) (cipher: Cipher): Message =
+        apply (decodeChar englishAlphabet) key cipher
+
+    let decipher (cipher: Cipher) (message: Message): Keyword =
+        let rec findRepeatingSubstring length (keySequence: string) =
+            let candidate = keySequence.Substring(0, length)
+
+            if Seq.forall2 (=) (Seq.cycle candidate) keySequence
+            then candidate
+            else findRepeatingSubstring (length + 1) keySequence
+
+        let messageAsKey = message
+        let cipherAsMessage = cipher
+
+        decode messageAsKey cipherAsMessage
+        |> findRepeatingSubstring 1
