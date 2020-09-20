@@ -17,7 +17,11 @@ module CardGameWar =
 
     type Card = Suit * Rank
 
-    let playRound (card1: Card, card2: Card) = failwith "not implemented: winning card"
+    let winningCard (card1: Card) (card2: Card): Card =
+        if card1 = card2 then failwith "someone is ceating"
+        elif card1 > card2 then card1
+        else card2
+
 
     let playGame (hand1: Card list, hand2: Card list) = failwith "not implemented: game winner"
 
