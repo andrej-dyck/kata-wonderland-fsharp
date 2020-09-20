@@ -1,5 +1,15 @@
-﻿namespace wonderland
+﻿namespace Wonderland
 
-module Say =
-    let hello name =
-        printfn "Hello %s" name
+module AlphabetCipher =
+
+    type Message = string
+    type Keyword = string
+
+    let encode (key:Keyword) (message:Message) : Message =
+        "encodeme"
+
+    let decode (key:Keyword) (message:Message) : Message =
+        "decodeme"
+
+    let decipher (cipher:Message) (message:Message) : Keyword =
+        "decypherme"

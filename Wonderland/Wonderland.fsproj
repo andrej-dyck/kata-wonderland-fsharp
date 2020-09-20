@@ -6,6 +6,7 @@
 
     <ItemGroup>
         <Compile Include="AlphabetCipher.fs" />
+        <Content Include="AlphabetCipher.md" />
     </ItemGroup>
 
 </Project>
