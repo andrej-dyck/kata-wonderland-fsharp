@@ -6,6 +6,8 @@
 
     <ItemGroup>
         <Compile Include="AlphabetCipher.fs" />
+        <Compile Include="CardGameWar.fs" />
+        <Content Include="CardGameWar.md" />
     </ItemGroup>
 
 </Project>
